@@ -1,0 +1,4 @@
+interface:
+  display_name: "Baidu Netdisk PCS"
+  short_description: "Search, upload, and share files in Baidu Netdisk"
+  default_prompt: "Use $baidu-netdisk-pcs to search my Baidu Netdisk and share a selected file."

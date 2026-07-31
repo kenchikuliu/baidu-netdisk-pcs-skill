@@ -1,0 +1,38 @@
+name: Validate Skill
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $errors = $null
+          $tokens = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("scripts/bootstrap.ps1", [ref]$tokens, [ref]$errors) | Out-Null
+          [System.Management.Automation.Language.Parser]::ParseFile("scripts/baidu-netdisk.ps1", [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors) { throw ($errors | Out-String) }
+
+      - name: Compile Python runner
+        run: python -m py_compile scripts/baidu_netdisk.py
+
+      - name: Bootstrap pinned BaiduPCS-Py
+        shell: pwsh
+        run: ./scripts/bootstrap.ps1
+
+      - name: Run unauthenticated doctor
+        shell: pwsh
+        run: ./scripts/baidu-netdisk.ps1 doctor
