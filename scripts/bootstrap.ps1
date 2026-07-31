@@ -125,11 +125,11 @@ $installedCommit = if (Test-Path -LiteralPath $marker) {
 
 $env:PYTHONPATH = $sourceDir
 $env:PYTHONWARNINGS = 'ignore'
-$dependencyProbe = 'import requests, requests_toolbelt, rich, click, passlib; import baidupcs_py'
+$dependencyProbe = 'import requests, requests_toolbelt, rich, click, passlib, typing_extensions; from PIL import Image; import baidupcs_py'
 & $python -c $dependencyProbe
 if ($LASTEXITCODE -ne 0) {
     & $python -m ensurepip --upgrade
-    & $python -m pip --isolated install --disable-pip-version-check requests requests-toolbelt rich click passlib
+    & $python -m pip --isolated install --disable-pip-version-check requests requests-toolbelt rich click passlib typing-extensions pillow
     if ($LASTEXITCODE -ne 0) {
         throw 'Failed to install the minimal Python dependencies.'
     }
